@@ -1,30 +1,49 @@
-import { Component, ElementRef, OnInit,ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit,ViewChild,OnDestroy } from '@angular/core';
 import { GoogleMap,Marker } from '@capacitor/google-maps';
 import { ModalController } from '@ionic/angular';
 import { environment } from 'src/environments/environment';
 import { ModalPage } from 'src/app/modal/modal.page';
+/* import { WebsocketsService } from '../services/websockets.service'; */
+import { Socket } from 'ngx-socket-io';
+
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.page.html',
   styleUrls: ['./map.page.scss'],
 })
-export class MapPage implements OnInit {
+export class MapPage implements OnInit,OnDestroy {
+
+  locations;
+  currentLocation;
+  //private _locSub:Subscription
+
+
   @ViewChild('map')mapRef:ElementRef;
   map:GoogleMap;
 
 
-  constructor(private modalCtrl:ModalController) { }
+  constructor(private modalCtrl:ModalController,private socket:Socket) { }
 
   ngOnInit() {
+    this.socket.connect();
+    this.socket.emit('set-name', 'ionicapp');
+
+    /* this.locations = this.socketService.getLocations();
+    this._locSub = this.socketService.currentLocation.subscribe(loc=>this.currentLocation=loc.idlocation); */
   }
+
+  ngOnDestroy() {
+   /*  this._locSub.unsubscribe(); */
+  }
+
 
   ionViewDidEnter(){
 
     this.createMap();
 
   }
-
+//map stuff
   async createMap() {
     this.map = await GoogleMap.create({
       id:'my-map',
@@ -96,5 +115,6 @@ export class MapPage implements OnInit {
 
   }
 
+  
 
 }
