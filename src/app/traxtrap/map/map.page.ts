@@ -28,6 +28,7 @@ export class MapPage implements OnInit,OnDestroy {
   ngOnInit() {
     this.socket.connect();
     this.socket.emit('set-name', 'ionicapp');
+    this.socket.emit('get-last-locations','probably useless message');
 
     /* this.locations = this.socketService.getLocations();
     this._locSub = this.socketService.currentLocation.subscribe(loc=>this.currentLocation=loc.idlocation); */
