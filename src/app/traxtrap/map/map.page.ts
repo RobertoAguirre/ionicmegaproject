@@ -16,6 +16,7 @@ export class MapPage implements OnInit, OnDestroy {
 
   locations;
   currentLocation;
+  markers = [];
   //private _locSub:Subscription
 
 
@@ -31,8 +32,12 @@ export class MapPage implements OnInit, OnDestroy {
     this.socket.emit('get-last-locations', 'probably useless message');
 
     this.socket.fromEvent('respond-last-locations').subscribe(data => {
-      this.locations = data;
+      let _locations;
+      _locations = data;
+      this.locations = _locations.locations;
       console.log(this.locations);
+      this.createMap();
+      //this.addMarkers();
     });
 
     /* this.locations = this.socketService.getLocations();
@@ -46,7 +51,7 @@ export class MapPage implements OnInit, OnDestroy {
 
   ionViewDidEnter() {
 
-    this.createMap();
+    //this.createMap();
 
   }
   //map stuff
@@ -64,38 +69,14 @@ export class MapPage implements OnInit, OnDestroy {
         zoom: 8
       }
     });
-    await this.addMarkers();
+    this.addMarkers();
     //this.addmarker(); create only one marker
   }
 
-  /*   async addmarker(){
-      await this.map.addMarker({
-        coordinate:{
-          lat:33.7,
-          lng:117.8
-        },
-        title: 'localhost',
-        snippet: 'Best place on earth'
-      })
-  
-    } */
-
   async addMarkers() {
+    console.log(this.markers);
 
-
-/*     this.locations.forEach((value) => {
-      let marker:Marker = {
-        coordinate: {
-          lat: 33.7,
-          lng: -117.8
-        },
-        title: 'localhost',
-        snippet: 'Best place on earth'
-      }
-      console.log(value);
-    }); */
-
-    const markers: Marker[] = [
+    let _markers = [
       {
         coordinate: {
           lat: 33.7,
@@ -115,7 +96,29 @@ export class MapPage implements OnInit, OnDestroy {
 
     ];
 
-    const result = await this.map.addMarkers(markers);
+
+    Object.values(this.locations.locations).forEach(function (value: any) {
+      // key: the name of the object key
+      // index: the ordinal position of the key within the object 
+      let mkr = {
+        coordinate: {
+          lat: value.lastrecord.latitude,
+          lng: value.lastrecord.longitude
+        },
+        title: 'localhost',
+        snippet: 'Best place on earth'
+      }
+
+
+      _markers.push(mkr);
+      console.log(value);
+      console.log("i am here in the foreach");
+    });
+
+
+
+
+    const result = await this.map.addMarkers(_markers);
     console.log(result);
 
     //click listener for marker
