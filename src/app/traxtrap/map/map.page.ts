@@ -17,6 +17,8 @@ export class MapPage implements OnInit, OnDestroy {
   locations;
   currentLocation;
   markers = [];
+  mapAlreadyCreated;
+
   //private _locSub:Subscription
 
 
@@ -24,7 +26,10 @@ export class MapPage implements OnInit, OnDestroy {
   map: GoogleMap;
 
 
-  constructor(private modalCtrl: ModalController, private socket: Socket) { }
+  constructor(private modalCtrl: ModalController, private socket: Socket) {
+    this.mapAlreadyCreated = false;
+
+  }
 
   ngOnInit() {
     this.socket.connect();
@@ -32,12 +37,18 @@ export class MapPage implements OnInit, OnDestroy {
     this.socket.emit('get-last-locations', 'probably useless message');
 
     this.socket.fromEvent('respond-last-locations').subscribe(data => {
+      console.log("got locations");
       let _locations;
       _locations = data;
       this.locations = _locations.locations;
       console.log(this.locations);
-      this.createMap();
-      //this.addMarkers();
+      if (this.mapAlreadyCreated === false) {
+        this.createMap();
+        this.mapAlreadyCreated = true;
+      } else {
+        this.addMarkers();
+      }
+
     });
 
     /* this.locations = this.socketService.getLocations();
@@ -54,6 +65,23 @@ export class MapPage implements OnInit, OnDestroy {
     //this.createMap();
 
   }
+
+  getLastLocations() {
+    this.socket.emit('get-last-locations', 'probably useless message');
+
+    this.socket.fromEvent('respond-last-locations').subscribe(data => {
+      let _locations;
+      _locations = data;
+      this.locations = _locations.locations;
+      console.log(this.locations);
+      //alert("got new locations");
+
+      //this.addMarkers();
+    });
+  }
+
+
+
   //map stuff
   async createMap() {
     this.map = await GoogleMap.create({
@@ -74,33 +102,17 @@ export class MapPage implements OnInit, OnDestroy {
   }
 
   async addMarkers() {
+
     console.log(this.markers);
 
-    let _markers = [
-      {
-        coordinate: {
-          lat: 33.7,
-          lng: -117.8
-        },
-        title: 'localhost',
-        snippet: 'Best place on earth'
-      },
-      {
-        coordinate: {
-          lat: 33.7,
-          lng: -117.2
-        },
-        title: 'random place on earth',
-        snippet: 'not sure'
-      }
-
-    ];
+    let _markers = [];
 
 
     Object.values(this.locations.locations).forEach(function (value: any) {
       // key: the name of the object key
       // index: the ordinal position of the key within the object 
       let mkr = {
+        id: value._id,
         coordinate: {
           lat: value.lastrecord.latitude,
           lng: value.lastrecord.longitude
@@ -114,7 +126,6 @@ export class MapPage implements OnInit, OnDestroy {
       console.log(value);
       console.log("i am here in the foreach");
     });
-
 
 
 
