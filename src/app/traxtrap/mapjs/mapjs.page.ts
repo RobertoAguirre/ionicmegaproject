@@ -21,7 +21,7 @@ export class MapjsPage implements OnInit {
   myMap: any;
   mapOptions;
   locations;
-  public markers=[];
+  public markers = [];
   markersCreated;
 
   //This is from the tutorial, possibly not using it
@@ -60,9 +60,12 @@ export class MapjsPage implements OnInit {
     console.log("SOCKET STARTING");
     this.socket.connect();
     this.socket.emit('set-name', 'ionicapp');
-    this.socket.emit('get-last-locations', 'probably useless message');
-    
-    this.socket.fromEvent('respond-last-locations').subscribe(data => {
+    this.socket.emit('get-last-locations', 'probably useless message', (response) => {
+      console.log(response.locations)
+    });
+
+    // client-side
+    this.socket.on("respond-last-locations", (data) => {
       console.log("got locations");
       let _locations;
       _locations = data;
@@ -70,16 +73,70 @@ export class MapjsPage implements OnInit {
       console.log(this.locations);
       if (this.markersCreated === false) {
         //this.addMarkers(_map);
-        this.turnLocationsIntoMarkers(_map,this.markers);
+        this.turnLocationsIntoMarkers(_map, this.markers);
         this.markersCreated = true;
         this.addMarkersToMap(_map);
         //console.log(this.markers.length);
       } else {
         this.updateMarkersPositions(_map);
       }
-
-
     });
+
+    /*     this.socket.emit('get-last-locations',(data)=>{
+          console.log("got locations");
+          let _locations;
+          _locations = data;
+          this.locations = _locations.locations;
+          console.log(this.locations);
+          if (this.markersCreated === false) {
+            //this.addMarkers(_map);
+            this.turnLocationsIntoMarkers(_map, this.markers);
+            this.markersCreated = true;
+            this.addMarkersToMap(_map);
+            //console.log(this.markers.length);
+          } else {
+            this.updateMarkersPositions(_map);
+          }
+        }) */
+
+
+    /*     this.socket.on('respond-last-locations', (data) => {
+    
+          console.log("got locations");
+          let _locations;
+          _locations = data;
+          this.locations = _locations.locations;
+          console.log(this.locations);
+          if (this.markersCreated === false) {
+            //this.addMarkers(_map);
+            this.turnLocationsIntoMarkers(_map, this.markers);
+            this.markersCreated = true;
+            this.addMarkersToMap(_map);
+            //console.log(this.markers.length);
+          } else {
+            this.updateMarkersPositions(_map);
+          }
+    
+        }) */
+
+    /*     this.socket.fromEvent('respond-last-locations').subscribe(data => {
+          console.log("got locations");
+          let _locations;
+          _locations = data;
+          this.locations = _locations.locations;
+          console.log(this.locations);
+          if (this.markersCreated === false) {
+            //this.addMarkers(_map);
+            this.turnLocationsIntoMarkers(_map,this.markers);
+            this.markersCreated = true;
+            this.addMarkersToMap(_map);
+            //console.log(this.markers.length);
+          } else {
+            this.updateMarkersPositions(_map);
+          }
+    
+    
+        }); */
     console.log("SOCKET STARTED");
 
   }
@@ -104,7 +161,7 @@ export class MapjsPage implements OnInit {
 
   }
 
-  turnLocationsIntoMarkers(_map,_markers) {
+  turnLocationsIntoMarkers(_map, _markers) {
 
 
     Object.values(this.locations.locations).forEach(function (value: any) {
@@ -116,24 +173,24 @@ export class MapjsPage implements OnInit {
         title: value._id,
         latitude: value.lastrecord.latitude,
         longitude: value.lastrecord.longitude,
-        imei:value._id,
-        id:value._id
+        imei: value._id,
+        id: value._id
       });
 
       _markers.push(mapMarker);
 
 
       //mapMarker.setMap(_map);
-      
+
     });
 
     console.log(this.markers.length);
   }
 
-  addMarkersToMap(_map){
+  addMarkersToMap(_map) {
     console.log(this.markers.length);
-    
-    for(let marker of this.markers){
+
+    for (let marker of this.markers) {
       marker.setMap(this.myMap);
       //marker.setPosition(marker.position);
       this.addInfoWindowToMarker(marker);
@@ -141,10 +198,10 @@ export class MapjsPage implements OnInit {
 
   }
 
-  addInfoWindowToMarker(marker){
+  addInfoWindowToMarker(marker) {
 
 
-    marker.addListener('click',async ()=>{
+    marker.addListener('click', async () => {
       console.log(marker);
       const modal = await this.modalCtrl.create({
         component: ModalPage,
@@ -162,18 +219,18 @@ export class MapjsPage implements OnInit {
   }
 
 
-  updateMarkersPositions(_map){
+  updateMarkersPositions(_map) {
     console.log(this.markers.length);
     console.log("updating markers positions");
-    for(let marker of this.markers){
-      
-      //force converting in array
-      let _locs=[];
-      _locs =Array.from(this.locations.locations);
-      console.log(_locs);  
+    for (let marker of this.markers) {
 
-      let currentMarker = _locs.find(element=>{
-        if(element._id===marker.id){
+      //force converting in array
+      let _locs = [];
+      _locs = Array.from(this.locations.locations);
+      console.log(_locs);
+
+      let currentMarker = _locs.find(element => {
+        if (element._id === marker.id) {
           return true;
         }
         return false;
@@ -186,6 +243,6 @@ export class MapjsPage implements OnInit {
     }
   }
 
-  
+
 
 }
