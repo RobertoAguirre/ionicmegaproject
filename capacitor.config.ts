@@ -1,8 +1,8 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'ionicmegaproject',
+  appId: 'com.vanguard.traxtrap',
+  appName: 'TraxTrap',
   webDir: 'www',
   bundledWebRuntime: false
 };

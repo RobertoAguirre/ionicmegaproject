@@ -4,7 +4,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    loadChildren: () => import('./traxtrap/mapjs/mapjs.module').then( m => m.MapjsPageModule)
+    loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
   },
   {
     path: 'home',
@@ -26,6 +26,10 @@ const routes: Routes = [
   {
     path: 'mapjs',
     loadChildren: () => import('./traxtrap/mapjs/mapjs.module').then( m => m.MapjsPageModule)
+  },
+  {
+    path: 'login',
+    loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
   }
 ];
 

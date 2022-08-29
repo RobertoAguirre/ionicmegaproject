@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { ModalController } from '@ionic/angular';
 import { ModalPage } from 'src/app/modal/modal.page';
 import { Socket } from 'ngx-socket-io';
-
+import * as moment from 'moment';
 
 
 
@@ -82,61 +82,12 @@ export class MapjsPage implements OnInit {
       }
     });
 
-    /*     this.socket.emit('get-last-locations',(data)=>{
-          console.log("got locations");
-          let _locations;
-          _locations = data;
-          this.locations = _locations.locations;
-          console.log(this.locations);
-          if (this.markersCreated === false) {
-            //this.addMarkers(_map);
-            this.turnLocationsIntoMarkers(_map, this.markers);
-            this.markersCreated = true;
-            this.addMarkersToMap(_map);
-            //console.log(this.markers.length);
-          } else {
-            this.updateMarkersPositions(_map);
-          }
-        }) */
 
 
-    /*     this.socket.on('respond-last-locations', (data) => {
-    
-          console.log("got locations");
-          let _locations;
-          _locations = data;
-          this.locations = _locations.locations;
-          console.log(this.locations);
-          if (this.markersCreated === false) {
-            //this.addMarkers(_map);
-            this.turnLocationsIntoMarkers(_map, this.markers);
-            this.markersCreated = true;
-            this.addMarkersToMap(_map);
-            //console.log(this.markers.length);
-          } else {
-            this.updateMarkersPositions(_map);
-          }
-    
-        }) */
 
-    /*     this.socket.fromEvent('respond-last-locations').subscribe(data => {
-          console.log("got locations");
-          let _locations;
-          _locations = data;
-          this.locations = _locations.locations;
-          console.log(this.locations);
-          if (this.markersCreated === false) {
-            //this.addMarkers(_map);
-            this.turnLocationsIntoMarkers(_map,this.markers);
-            this.markersCreated = true;
-            this.addMarkersToMap(_map);
-            //console.log(this.markers.length);
-          } else {
-            this.updateMarkersPositions(_map);
-          }
-    
-    
-        }); */
+ 
+
+
     console.log("SOCKET STARTED");
 
   }
@@ -161,6 +112,13 @@ export class MapjsPage implements OnInit {
 
   }
 
+  formatDate (_date){
+
+    return moment(_date).format("YYYY-MM-DD HH:mm:ss")
+
+  }
+
+  
   turnLocationsIntoMarkers(_map, _markers) {
 
 
@@ -174,7 +132,8 @@ export class MapjsPage implements OnInit {
         latitude: value.lastrecord.latitude,
         longitude: value.lastrecord.longitude,
         imei: value._id,
-        id: value._id
+        id: value._id,
+        date:moment(value.lastrecord.date).format("YYYY-MM-DD HH:mm:ss")
       });
 
       _markers.push(mapMarker);
