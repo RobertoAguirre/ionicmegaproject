@@ -17,7 +17,6 @@ import { AuthConfig, AuthModule } from '@auth0/auth0-angular';
 import { TraxtrapModule } from './traxtrap/traxtrap.module';
 import { domain, clientId, callbackUri } from './auth.config';
 
-
 const authConfig: AuthConfig = {
   domain,
   clientId,
@@ -29,15 +28,20 @@ const authConfig: AuthConfig = {
   // useRefreshTokens: true
 };
 
-const config: SocketIoConfig = { url: 'http://74.208.145.99:3009', options: {} };
+const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, PlainprofileComponentModule, LoginbuttonComponentModule, LogoutbuttonComponentModule,
+  imports: [
+    BrowserModule,
+    PlainprofileComponentModule,
+    LoginbuttonComponentModule,
+    LogoutbuttonComponentModule,
     AuthModule.forRoot(authConfig),
     TraxtrapModule,
     IonicModule.forRoot(),
-    AppRoutingModule],
+    AppRoutingModule,
+  ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
